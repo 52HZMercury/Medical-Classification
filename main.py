@@ -5,7 +5,6 @@ from evaluate import evaluate
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from config import hparams as hp
-from torch.optim.lr_scheduler import StepLR
 from torchvision import transforms
 from dataset.data_splitter import read_split_dataset
 from dataset.med_2d_dataset import MedDataSet

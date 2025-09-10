@@ -10,10 +10,14 @@ class hparams:
     init_lr = 0.0002  # 初始学习率
     scheduer_step_size = 20  # 学习率衰减间隔
     scheduer_gamma = 0.8  # 学习率衰减因子
-    is_3d = True
+    is_3d = True # 是否为3d数据，进行数据增强，但目前3d数据并没有进行数据增强
+
+    # 如果采用是随机划分数据集，则使用以下参数进行划分比例确定
     train_ratio = 0.8
     val_ratio = 0.1
     test_ratio = 0.1
 
+    # 数据集文件参数
     data_dir = '/workdir1/echo_dataset/MI-DATA/CAMUS/pt_data/'
+    # 标注数据集的文件参数
     metadata_path = 'metadata/label_select160.csv'

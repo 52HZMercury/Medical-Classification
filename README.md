@@ -1,60 +1,25 @@
 ## 环境配置
+创建conda环境
 ```shell
 conda create -n medClassify python=3.8
 ```
+安装依赖
 ```shell
 pip install -r requirements.txt
 ```
-## 通知
-* 我们几乎提供了所有的2D和3D分类的算法。
-* 本项目兼容几乎所有的医学数据格式(例如 png, nii.gz, nii, mhd, nrrd, ...)，修改**hparam.py**的**fold_arch**即可。
-* 如果您想进行**多分类**分割，请自行修改**data_function.py**的对应代码。我不能确定您的具体分类数。
+## 功能
+* 在config文件中，可以调节各个参数，具体详见配置文件。
+* 提供了部分基础2D和3D分类的算法。
+* 目前提供了二维的图片分类和三维CAMUS数据集的分类，如果想自行扩展，请自定义数据集类进行修改。
+* 如果您想进行**多分类**任务，请自行修改**num_classes**参数
 
-
-
-## 准备您的数据
-### 例
-如果您的source文件夹如下排列 :
-```
-categpry-0
-├── source_1.png
-├── source_2.png
-├── source_3.png
-└── ...
-```
-
-```
-categpry-1
-├── source_1.png
-├── source_2.png
-├── source_3.png
-└── ...
-```
-
-您应该修改 **fold_arch** 为 **\*/\*.png**, **source_train_0_dir** 为 **categpry-0** 并修改 **source_train_1_dir** 为 **categpry-1** in **hparam.py**
-
-
+## 新增模型
+添加新的模型，请在get_model方法进行添加。
 
 ## 训练
-* 不使用预训练模型
-```
-set hparam.train_or_test to 'train'
+```shell
 python main.py
 ```
-* 使用预训练模型
-```
-set hparam.train_or_test to 'train'
-set hparam.ckpt to True
-python main.py
-```
-  
-## Inference
-* 测试
-```
-set hparam.train_or_test to 'test'
-python main.py
-```
-
 
 
 ## Done
@@ -72,13 +37,3 @@ python main.py
 - [x] densenet3d
 - [x] resnet3d
 - [x] resnext3d
-
-## TODO
-- [ ] dataset
-- [ ] benchmark
-
-## By The Way
-这个项目并不完美，还存在很多问题。如果您正在使用这个项目，并想给作者一些反馈，您可以给[Kangneng Zhou](elliszkn@163.com)发邮件，或添加他的**微信**：ellisgege666
-
-## 致谢
-这个项目是一个非官方PyTorch实现的3D和2D医学分类，高度依赖于[pytorch-cifar100](https://github.com/weiaicunzai/pytorch-cifar100)和[torchio](https://github.com/fepegar/torchio)。感谢上述项目。感谢[Cheng Chen](b20170310@xs.ustb.edu.cn)和[Weili Jiang](1379252229@qq.com)对我的帮助。
