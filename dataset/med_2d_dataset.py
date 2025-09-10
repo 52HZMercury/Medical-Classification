@@ -7,33 +7,11 @@ import torch
 import random
 from PIL import Image
 
-import torchio as tio
-from torchio import AFFINE, DATA
-import torchio
-from torchio import ScalarImage, LabelMap, Subject, SubjectsDataset, Queue
-from torchio.data import UniformSampler
-from torchio.transforms import (
-    RandomFlip,
-    RandomAffine,
-    RandomElasticDeformation,
-    RandomNoise,
-    RandomMotion,
-    RandomBiasField,
-    RescaleIntensity,
-    Resample,
-    ToCanonical,
-    ZNormalization,
-    CropOrPad,
-    HistogramStandardization,
-    OneOf,
-    Compose,
-)
-from pathlib import Path
-
-from config import hparams as hp
-
 
 class MedDataSet(torch.utils.data.Dataset):
+    """
+    自定义数据集类，用于处理2d数据集
+    """
     def __init__(self, data, transform=None):
         """
         初始化数据集
@@ -79,7 +57,6 @@ class MedDataSet(torch.utils.data.Dataset):
         # 官方实现的default_collate可以参考
         # https://github.com/pytorch/pytorch/blob/67b7e751e6b5931a9f45274653f4f653a4e6cdf6/torch/utils/data/_utils/collate.py
         images, labels = tuple(zip(*batch))
-
         images = torch.stack(images, dim=0)
         labels = torch.as_tensor(labels)
         return images, labels

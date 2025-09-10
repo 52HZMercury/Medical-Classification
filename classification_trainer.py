@@ -2,8 +2,6 @@ import os
 import torch
 import sys
 
-from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
 from models.utils.get_model import get_model
 from tqdm import tqdm
 from loss import Classification_Loss, FocalLoss

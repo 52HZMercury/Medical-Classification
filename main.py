@@ -1,8 +1,6 @@
 import os
 import argparse
-import numpy as np
 import torch
-from sklearn import metrics
 from evaluate import evaluate
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -10,7 +8,8 @@ from config import hparams as hp
 from torch.optim.lr_scheduler import StepLR
 from torchvision import transforms
 from dataset.data_splitter import read_split_dataset
-from dataset.med_dataset import MedDataSet
+from dataset.med_2d_dataset import MedDataSet
+from dataset.med_3d_dataset import CAMUSDataset
 from classification_trainer import MedicalClassificationTrainer
 from dataset.augmentation import get_transforms
 
@@ -85,7 +84,8 @@ def train(args, trainer, train_loader, val_loader=None):
                 'val_acc': val_acc
             }, latest_model_path)
 
-            tags = ["train_loss", "train_acc", "learning_rate", "val_loss", "val_acc", "val_precision", "val_recall", "val_f1"]
+            tags = ["train_loss", "train_acc", "learning_rate", "val_loss", "val_acc", "val_precision", "val_recall",
+                    "val_f1"]
             tb_writer.add_scalar(tags[0], train_loss, epoch)
             tb_writer.add_scalar(tags[1], train_acc, epoch)
             tb_writer.add_scalar(tags[2], trainer.optimizer.param_groups[0]["lr"], epoch)
@@ -143,23 +143,22 @@ def test(args, model, test_loader):
 
 
 def main(args):
+    # 定义数据增强转换
+    data_transform = get_transforms(args.is_3d)
+
     # 使用dataSplitter读取并分割数据集
-    train_data, val_data, test_data = read_split_dataset(args.data)
+    # train_data, val_data, test_data = read_split_dataset(args.data)
+    # # 实例化2d的三个数据集 分别是训练 验证 测试
+    # train_dataset = MedDataSet(data=train_data,transform=data_transform["train"])
+    # val_dataset = MedDataSet(data=val_data,transform=data_transform["val"])
+    # #测试集和验证数据集采取一样的处理方式
+    # test_dataset = MedDataSet(data=test_data,transform=data_transform["val"])
 
-    # 定义2D数据增强转换
-    data_transform = get_transforms(is_3d=args.is_3d)
-
-    # 实例化训练数据集
-    train_dataset = MedDataSet(data=train_data,
-                               transform=data_transform["train"])
-
-    # 实例化验证数据集
-    val_dataset = MedDataSet(data=val_data,
-                             transform=data_transform["val"])
-
-    # 实例化测试数据集 和验证数据集采取一样的处理方式
-    test_dataset = MedDataSet(data=test_data,
-                              transform=data_transform["val"])
+    # 实例化3d的三个数据集 分别是训练 验证 测试
+    train_dataset = CAMUSDataset(args.data, args.metadata_path, "A2C", [1, 2, 3, 4])
+    val_dataset = CAMUSDataset(args.data, args.metadata_path, "A2C", [5])
+    # 测试集和验证数据集采取一样的处理方式
+    test_dataset = CAMUSDataset(args.data, args.metadata_path, "A2C", [5])
 
     batch_size = args.batch
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
@@ -168,22 +167,19 @@ def main(args):
                                                batch_size=batch_size,
                                                shuffle=True,
                                                pin_memory=True,
-                                               num_workers=nw,
-                                               collate_fn=train_dataset.collate_fn)
+                                               num_workers=nw)
 
     val_loader = torch.utils.data.DataLoader(val_dataset,
                                              batch_size=batch_size,
                                              shuffle=False,
                                              pin_memory=True,
-                                             num_workers=nw,
-                                             collate_fn=val_dataset.collate_fn)
+                                             num_workers=nw)
 
     test_loader = torch.utils.data.DataLoader(test_dataset,
                                               batch_size=batch_size,
                                               shuffle=False,
                                               pin_memory=True,
-                                              num_workers=nw,
-                                              collate_fn=test_dataset.collate_fn)
+                                              num_workers=nw)
 
     # 初始化模型 优化器 损失函数
     Trainer = MedicalClassificationTrainer(args, hp)
@@ -197,9 +193,10 @@ if __name__ == '__main__':
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', type=str, default=hp.data_dir, required=False, help='数据集文件夹')
-    parser.add_argument('--num_classes', type=str, default=hp.num_classes, required=False,help='分几类')
-    parser.add_argument('--is_3d', type=str, default=hp.is_3d, required=False,help='是否是3D数据集')
-    parser.add_argument('--log_dir', type=str, default=hp.log_dir, required=False,help='Directory to save logs')
+    parser.add_argument('--is_3d', type=str, default=hp.is_3d, required=False, help='根据是否3d数据应用数据增强')
+    parser.add_argument('--metadata_path', type=str, default=hp.metadata_path, required=False, help='元数据文件路径')
+    parser.add_argument('--num_classes', type=str, default=hp.num_classes, required=False, help='分几类')
+    parser.add_argument('--log_dir', type=str, default=hp.log_dir, required=False, help='Directory to save logs')
 
     # training
     training = parser.add_argument_group('training setup')

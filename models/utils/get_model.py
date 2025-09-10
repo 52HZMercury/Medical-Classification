@@ -45,7 +45,10 @@ def get_model(model_name, num_classes=2, pretrained=False):
         model = resnet18(num_classes=num_classes)
 
     elif model_name == 'resnet3d_18':
-        model = resnet3d(18,n_input_channels=1,n_classes=2)
+        model = resnet3d(18,n_input_channels=3,n_classes=2)
+
+    elif model_name == 'resnet3d_101':
+        model = resnet3d(101,n_input_channels=3,n_classes=2)
 
     else:
         raise ValueError(f"Unsupported model name: {model_name}")

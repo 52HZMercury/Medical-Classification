@@ -1,10 +1,11 @@
-## 环境要求
-* pytorch1.7
-* torchio<=0.18.20
-* python>=3.6
-
+## 环境配置
+```shell
+conda create -n medClassify python=3.8
+```
+```shell
+pip install -r requirements.txt
+```
 ## 通知
-* 您可以修改**hparam.py**文件来确定是2D分类还是3D分类以及是否可以进行多分类。
 * 我们几乎提供了所有的2D和3D分类的算法。
 * 本项目兼容几乎所有的医学数据格式(例如 png, nii.gz, nii, mhd, nrrd, ...)，修改**hparam.py**的**fold_arch**即可。
 * 如果您想进行**多分类**分割，请自行修改**data_function.py**的对应代码。我不能确定您的具体分类数。
