@@ -2,9 +2,9 @@ class hparams:
     device_id = 0  # 指定使用的GPU ID
     model_name = 'resnet3d_101'  # 训练用的模型
     total_epochs = 10  # 训练轮数
-    batch_size = 8  # 批次大小
+    batch_size = 4  # 批次大小
     num_classes = 2  # 分类数
-    log_dir = 'logs/experiment_10'  # 日志保存路径
+    log_dir = 'logs/experiment_12'  # 日志保存路径
     ckpt = None  # 模型保存路径
     save_by_metric = 'val_acc'  # 保存模型时使用的指标
     init_lr = 0.0002  # 初始学习率

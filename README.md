@@ -1,7 +1,7 @@
 ## 环境配置
 创建conda环境
 ```shell
-conda create -n medClassify python=3.8
+conda create -n [env-name] python=3.8
 ```
 安装依赖
 ```shell
